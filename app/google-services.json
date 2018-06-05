@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "354044568511",
+    "firebase_url": "https://appaution-99ed8.firebaseio.com",
+    "project_id": "appaution-99ed8",
+    "storage_bucket": "appaution-99ed8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:354044568511:android:21eaa921ef17b7e1",
+        "android_client_info": {
+          "package_name": "com.example.hieu.appaution"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "354044568511-f8ph3nj5mlvdds07rkh0h6jdpkps1k41.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hieu.appaution",
+            "certificate_hash": "0117f64a80d4cb38a1bacee6d9f63e9dde81daf2"
+          }
+        },
+        {
+          "client_id": "354044568511-plo3k7ndfqsmr4r7pq7nu48kouifi2cm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEuLtTlkNTvP2OkIlHT0EN1YEZhmQ8SW8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "354044568511-plo3k7ndfqsmr4r7pq7nu48kouifi2cm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
