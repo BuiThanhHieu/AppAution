@@ -192,7 +192,8 @@ public class Detail_Product extends Fragment {
         tv_nameproduct.setText(product.getName());
         int len=String.valueOf(product.getPriceAution()).length()-2;
         price=product.getPriceAution();
-        Calendar calendar = Calendar.getInstance();
+        //
+       /* Calendar calendar = Calendar.getInstance();
         time=product.getTimeEnd();
         String []s=product.getTimeEnd().split(" ");
         String []hourend=s[1].split(":");;
@@ -200,7 +201,54 @@ public class Detail_Product extends Fragment {
         int time=calendar.get(Calendar.MINUTE)*60+calendar.get(Calendar.SECOND);
         int minute=(timeend-time)/60;
         int second= (timeend-time)%60;
-        tv_time.setText(minute+":"+second);
+        tv_time.setText(minute+":"+second);*/
+        Calendar calendar = Calendar.getInstance();
+        int hour=calendar.get(Calendar.HOUR);
+        int minute=calendar.get(Calendar.MINUTE);
+        int second=calendar.get(Calendar.SECOND);
+        String []gettime=product.getTimeEnd().split(" ");
+        String []timeEnd=gettime[1].split(":");
+        int phut=Integer.parseInt(timeEnd[1])-minute;
+        int giay=Integer.parseInt(timeEnd[2])-second;
+        int gio= Integer.parseInt(timeEnd[0])-hour;
+
+        if(phut<0)
+        {
+            phut=phut+60;
+        }
+        if(giay<0)
+        {
+            giay=giay+60;
+        }
+
+
+        countDownTimer= new CountDownTimer((phut*60+giay)*1000,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long t=millisUntilFinished/1000;
+                long p=t/60;
+                long g=t%60;
+                String m,s;
+                m=""+p;
+                s=""+g;
+                if(p/10<1)
+                {
+                    m="0"+p;
+                }
+                if(g/10<1){
+                    s="0"+g;
+                }
+                tv_time.setText(m+":"+s);
+                //  holder.time.setText(""+millisUntilFinished/1000);
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+        };
+        countDownTimer.start();
+        //
         String S=String.valueOf(product.getPriceAution()).substring(0,len)+" VND";
         tv_priceBid.setText(S);
         len=String.valueOf(product.getPrice()).length()-2;

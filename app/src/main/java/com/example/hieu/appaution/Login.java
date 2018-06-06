@@ -68,7 +68,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
-        mDatabase = FirebaseDatabase.getInstance().getReference("accounts");
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         //
        /* try {
             PackageInfo packageInfo = getPackageManager().getPackageInfo("com.example.hieu.appaution", PackageManager.GET_SIGNATURES);
@@ -334,15 +334,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     private void updateUI(FirebaseUser user) {
         if(user!=null)
         {
-           // Toast.makeText(this, user.getDisplayName(), Toast.LENGTH_SHORT).show();
-          /*  AccountUsers users= new AccountUsers();
-            users.setEmai(user.getEmail());
-            users.setAddress("");
-            users.setPhone("fggfg");
-           //mDatabase.setValue(users);
-          // mDatabase.child(user.getUid()).setValue(user);
-            Toast.makeText(this, "thanh cong", Toast.LENGTH_SHORT).show();
-*/
+          AccountUsers accountUsers = new AccountUsers();
+          accountUsers.setName(user.getDisplayName());
+          accountUsers.setEmai(user.getEmail());
+          accountUsers.setPhone(user.getPhoneNumber());
+         //accountUsers.setKey(user.getUid());
+          mDatabase.child("Users").child(user.getUid()).setValue(accountUsers);
+             //accountUsers.setAddress(user.get);
+
         }
         else{
             Toast.makeText(this, "fail" +"", Toast.LENGTH_SHORT).show();

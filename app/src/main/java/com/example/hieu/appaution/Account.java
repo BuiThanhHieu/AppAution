@@ -73,7 +73,7 @@ public class Account extends Fragment implements AdapterView.OnItemSelectedListe
         btnsubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                luudata(edt_name.getText().toString(),edt_px.getText().toString(),edt_qh.getText().toString(),edt_ttp.getText().toString());
+                luudata();
             }
         });
        // spnProvince.setOnItemSelectedListener(this);
@@ -106,13 +106,13 @@ public class Account extends Fragment implements AdapterView.OnItemSelectedListe
         return view;
     }
 
-    private void luudata(String s, String s1, String s2, String s3) {
+    private void luudata() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         AccountUsers accountUsers= new AccountUsers();
-        accountUsers.setName(s);
-        accountUsers.setAddress(s1);
-        accountUsers.setName(s2);
-        accountUsers.setPhone(s3);
+        accountUsers.setName(edt_name.getText().toString());
+        accountUsers.setAddress(edt_px.getText().toString()+","+edt_qh.getText().toString()+","+edt_ttp.getText().toString());
+        accountUsers.setPhone(edt_sdt.getText().toString());
+        accountUsers.setEmai(edt_email.getText().toString());
         mDatabase1.child("Users").child(user.getUid()).setValue(accountUsers);
     }
 

@@ -4,8 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AccountUsers {
-   private String Name,Address,Emai,Phone;
+   private String Name,Address,Emai,Phone,key;
+
     public Map<String,Boolean> stars =new HashMap<>();
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     public String getName() {
         return Name;
