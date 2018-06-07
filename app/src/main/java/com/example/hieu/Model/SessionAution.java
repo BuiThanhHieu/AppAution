@@ -4,12 +4,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SessionAution {
+    private String key;
     private String keyss;
     private String keysp;
     private String namesp;
     private String username;
     private String datetime;
     private Double price;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     public String getKeyss() {
         return keyss;

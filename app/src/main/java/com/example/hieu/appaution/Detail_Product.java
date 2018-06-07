@@ -29,7 +29,7 @@ import java.util.Date;
 
 public class Detail_Product extends Fragment {
     String key,time;
-    DatabaseReference mDatabase,mDatabasesession;
+    DatabaseReference mDatabase,mDatabasesession,Databasesession,customerdatabase;
     TextView tv_time,tv_currentbid,tv_currentuser,tv_priceBid,tv_description,tv_nameproduct;
     Button btn_BId;
     ImageView imageView,img_decrese,img_increase;
@@ -37,6 +37,7 @@ public class Detail_Product extends Fragment {
     FirebaseUser user;
     String timer;
     CountDownTimer countDownTimer;
+    String keytime;
     public Detail_Product() {
         // Required empty public constructor
     }
@@ -51,12 +52,13 @@ public class Detail_Product extends Fragment {
 
         if(bundle!=null)
         {     key= bundle.getString("key");
-                timer=bundle.getString("time");
+             //   timer=bundle.getString("time");
             Toast.makeText(getContext(),key , Toast.LENGTH_SHORT).show();
         }
         if(key == null || key.isEmpty() || key.trim().equals("")) return null;
         mDatabase = FirebaseDatabase.getInstance().getReference("store/"+key);
-        mDatabasesession = FirebaseDatabase.getInstance().getReference();
+
+        //mDatabasesession = FirebaseDatabase.getInstance().getReference();
 
 
         findId(view);
@@ -94,34 +96,41 @@ public class Detail_Product extends Fragment {
                 bidAution();
             }
         });
+
         refreshdata();
-        // Inflate the layout for this fragment
-        /*Thread t=new Thread(){
+        mDatabasesession = FirebaseDatabase.getInstance().getReference("session");
+        mDatabasesession.addValueEventListener(new ValueEventListener() {
             @Override
-            public void run() {
-                while (!isInterrupted()) {
-
-                    try {
-                        Thread.sleep(1000);
-                        if(getActivity() == null)
-                            return;
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // Toast.makeText(getActivity(), "fff", Toast.LENGTH_SHORT).show();
-                                autorefresh();
-                            }
-                        });
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                loaddatasession(dataSnapshot);
             }
-        };
-        t.start();*/
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         return view ;
     }
+
+    private void loaddatasession(DataSnapshot dataSnapshot) {
+        for(DataSnapshot ds :dataSnapshot.getChildren()) {
+            SessionAution sessionAution = new SessionAution();
+            sessionAution = ds.getValue(SessionAution.class);
+            if(sessionAution == null) return;
+            String s= ds.getKey();
+            String tam=key+"_"+tv_currentuser.getText().toString();
+            if(s.equals(tam))
+            {
+                s=sessionAution.getUsername();
+                tv_currentuser.setText(sessionAution.getUsername());
+                tv_currentbid.setText(sessionAution.getPrice()+" VND");
+            }
+        }
+            // tam=ds.getValue(Product.class).getTime().toString();
+        //tv_currentbid.setText(sessionAution.getPrice().toString());
+    }
+
     private void bidAution(){
         int len=tv_currentbid.getText().toString().length()-4;
         String s=tv_currentbid.getText().toString().substring(0,len);
@@ -134,23 +143,51 @@ public class Detail_Product extends Fragment {
         len=tv_currentbid.getText().toString().length()-4;
         String ss=tv_currentbid.getText().toString().substring(0,len);
        if(Double.parseDouble(s)==0){
-           createDatababase(ss,tv_currentuser.getText().toString(),key,currentDateTimeString);
+           createDatababase(ss,tv_currentuser.getText().toString(),key,currentDateTimeString,user.getUid());
         }
         else {
-           updatedata(ss,tv_currentuser.getText().toString(),key,currentDateTimeString);
+           updatedata(ss,tv_currentuser.getText().toString(),key,currentDateTimeString,user.getUid());
        }
 
     }
 
-    private void updatedata(String priceid, String user, String key, String currentDateTimeString) {
+    private void updatedata(String priceid, String user, String key, String currentDateTimeString,String uid) {
         SessionAution sessionAution = new SessionAution();
         sessionAution.setUsername(user);
         sessionAution.setPrice(Double.parseDouble(priceid));
         sessionAution.setDatetime(currentDateTimeString);
         sessionAution.setKeysp(key);
+        final String sss=currentDateTimeString;
+        // mDatabasesession.child("session").push().setValue("ddd02");
+        ;//String t=time;
+        String ssID=key+"_"+time;
+        mDatabasesession.child("session").child(ssID).setValue(sessionAution);
+        customerdatabase=FirebaseDatabase.getInstance().getReference("session/"+ssID+"/Customer");
+        SessionAution sessionAution1 = new SessionAution();
+        sessionAution1.setUsername(user);
+        sessionAution1.setPrice(price);
+        sessionAution1.setDatetime(currentDateTimeString);
+        customerdatabase.child(uid).push().setValue(sessionAution1);
+      /*  mDatabasesession.child("session").child(ssID).child("Customer").child(uid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                SessionAution sessionAution1 = new SessionAution();
+                sessionAution1.setUsername(tv_currentuser.getText() .toString());
+                sessionAution1.setPrice(price);
+                sessionAution1.setDatetime(sss);
+
+                //sessionAution.setKeysp(key);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
     }
 
-    private void createDatababase(String priceid, String user, String key, String currentDateTimeString) {
+    private void createDatababase(String priceid, String user, String key, String currentDateTimeString,String uid) {
         SessionAution sessionAution = new SessionAution();
         sessionAution.setUsername(user);
         sessionAution.setPrice(Double.parseDouble(priceid));
@@ -158,16 +195,16 @@ public class Detail_Product extends Fragment {
         sessionAution.setKeysp(key);
 
        // mDatabasesession.child("session").push().setValue("ddd02");
-        String t=time;
+        ;//String t=time;
         String ssID=key+"_"+time;
         mDatabasesession.child("session").child(ssID).setValue(sessionAution);
 
+        customerdatabase=FirebaseDatabase.getInstance().getReference("session/"+ssID+"/Customer");
         SessionAution sessionAution1 = new SessionAution();
         sessionAution1.setUsername(user);
         sessionAution1.setPrice(price);
         sessionAution1.setDatetime(currentDateTimeString);
-        sessionAution.setKeysp(key);
-        mDatabasesession.child("session").child(ssID).child("Customer").setValue(sessionAution1);
+        customerdatabase.child(uid).push().setValue(sessionAution1);
     }
 
 
@@ -192,6 +229,9 @@ public class Detail_Product extends Fragment {
         tv_nameproduct.setText(product.getName());
         int len=String.valueOf(product.getPriceAution()).length()-2;
         price=product.getPriceAution();
+
+        time=product.getTimeEnd();
+        tv_currentuser.setText(time);
         //
        /* Calendar calendar = Calendar.getInstance();
         time=product.getTimeEnd();
@@ -250,7 +290,9 @@ public class Detail_Product extends Fragment {
         countDownTimer.start();
         //
         String S=String.valueOf(product.getPriceAution()).substring(0,len)+" VND";
+
         tv_priceBid.setText(S);
+
         len=String.valueOf(product.getPrice()).length()-2;
         S=String.valueOf(product.getPrice()).substring(0,len)+" VND";
         tv_currentbid.setText(S);
@@ -261,6 +303,21 @@ public class Detail_Product extends Fragment {
                 .fit()
                 .centerCrop()
                 .into(imageView);
+       /* Databasesession=FirebaseDatabase.getInstance().getReference("session/"+key+time);
+        Databasesession.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                SessionAution sessionAution= new SessionAution();
+                sessionAution=dataSnapshot.getValue(SessionAution.class);
+                tv_currentuser.setText(sessionAution.getUsername());
+                tv_priceBid.setText(sessionAution.getPrice().toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
 
     }
 
