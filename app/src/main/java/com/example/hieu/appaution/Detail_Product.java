@@ -29,7 +29,7 @@ import java.util.Date;
 
 public class Detail_Product extends Fragment {
     String key,time;
-    DatabaseReference mDatabase,mDatabasesession,Databasesession,customerdatabase;
+    DatabaseReference mDatabase,mDatabasesession,mDatabasesession1,Databasesession,customerdatabase;
     TextView tv_time,tv_currentbid,tv_currentuser,tv_priceBid,tv_description,tv_nameproduct;
     Button btn_BId;
     ImageView imageView,img_decrese,img_increase;
@@ -58,7 +58,7 @@ public class Detail_Product extends Fragment {
         if(key == null || key.isEmpty() || key.trim().equals("")) return null;
         mDatabase = FirebaseDatabase.getInstance().getReference("store/"+key);
 
-        //mDatabasesession = FirebaseDatabase.getInstance().getReference();
+        mDatabasesession1 = FirebaseDatabase.getInstance().getReference();
 
 
         findId(view);
@@ -125,6 +125,10 @@ public class Detail_Product extends Fragment {
                 s=sessionAution.getUsername();
                 tv_currentuser.setText(sessionAution.getUsername());
                 tv_currentbid.setText(sessionAution.getPrice()+" VND");
+                Double d=sessionAution.getPrice()+10000;
+                int len =d.toString().length()-2;
+                String ss=d.toString().substring(0,len);
+                tv_priceBid.setText(ss+" VND");
             }
         }
             // tam=ds.getValue(Product.class).getTime().toString();
@@ -152,22 +156,29 @@ public class Detail_Product extends Fragment {
     }
 
     private void updatedata(String priceid, String user, String key, String currentDateTimeString,String uid) {
-        SessionAution sessionAution = new SessionAution();
+       /* SessionAution sessionAution = new SessionAution();
         sessionAution.setUsername(user);
         sessionAution.setPrice(Double.parseDouble(priceid));
         sessionAution.setDatetime(currentDateTimeString);
         sessionAution.setKeysp(key);
         final String sss=currentDateTimeString;
         // mDatabasesession.child("session").push().setValue("ddd02");
-        ;//String t=time;
+        ;//String t=time;*/
         String ssID=key+"_"+time;
-        mDatabasesession.child("session").child(ssID).setValue(sessionAution);
+
+        mDatabasesession1.child("session").child(ssID).child("datetime").setValue(currentDateTimeString);
+        mDatabasesession1.child("session").child(ssID).child("price").setValue(Double.parseDouble(priceid));
+        mDatabasesession1.child("session").child(ssID).child("username").setValue(user);
+       // mDatabasesession1.child("session").child(ssID).child("datetime").setValue(currentDateTimeString);
         customerdatabase=FirebaseDatabase.getInstance().getReference("session/"+ssID+"/Customer");
         SessionAution sessionAution1 = new SessionAution();
         sessionAution1.setUsername(user);
-        sessionAution1.setPrice(price);
+        String tam= tv_currentbid.getText().toString();
+        int len=tam.length()-4;
+        Double pr=Double.parseDouble(tam.substring(0,len));
+        sessionAution1.setPrice(pr);
         sessionAution1.setDatetime(currentDateTimeString);
-        customerdatabase.child(uid).push().setValue(sessionAution1);
+        customerdatabase.child(uid).setValue(sessionAution1);
       /*  mDatabasesession.child("session").child(ssID).child("Customer").child(uid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -197,14 +208,14 @@ public class Detail_Product extends Fragment {
        // mDatabasesession.child("session").push().setValue("ddd02");
         ;//String t=time;
         String ssID=key+"_"+time;
-        mDatabasesession.child("session").child(ssID).setValue(sessionAution);
+        mDatabasesession1.child("session").child(ssID).setValue(sessionAution);
 
         customerdatabase=FirebaseDatabase.getInstance().getReference("session/"+ssID+"/Customer");
         SessionAution sessionAution1 = new SessionAution();
         sessionAution1.setUsername(user);
         sessionAution1.setPrice(price);
         sessionAution1.setDatetime(currentDateTimeString);
-        customerdatabase.child(uid).push().setValue(sessionAution1);
+        customerdatabase.child(uid).setValue(sessionAution1);
     }
 
 
