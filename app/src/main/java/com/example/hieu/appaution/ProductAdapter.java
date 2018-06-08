@@ -49,7 +49,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ImageVie
 
         int len=String.valueOf(productcurent.getPriceAution()).length()-2;
         String S=String.valueOf(productcurent.getPriceAution()).substring(0,len);
-
+        final String name=productcurent.getTimeEnd();
         holder.gia.setText(S);
         //
        /* String []s=productcurent.getTimeEnd().split(" ");
@@ -134,7 +134,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ImageVie
                 Toast.makeText(context,t, Toast.LENGTH_SHORT).show();
                 Detail_Product detail_product= new Detail_Product();
                 Bundle bundle =new Bundle();
-                bundle.putString("time",holder.time.getText().toString());
+                bundle.putString("time",name);
                 bundle.putString("key",holder.key.getText().toString());
                 detail_product.setArguments(bundle);
                 FragmentManager manager = ((AppCompatActivity)context).getSupportFragmentManager();

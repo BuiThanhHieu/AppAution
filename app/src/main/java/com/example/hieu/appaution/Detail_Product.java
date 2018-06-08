@@ -52,7 +52,7 @@ public class Detail_Product extends Fragment {
 
         if(bundle!=null)
         {     key= bundle.getString("key");
-             //   timer=bundle.getString("time");
+              timer=bundle.getString("time");
             Toast.makeText(getContext(),key , Toast.LENGTH_SHORT).show();
         }
         if(key == null || key.isEmpty() || key.trim().equals("")) return null;
@@ -90,15 +90,27 @@ public class Detail_Product extends Fragment {
                 }
             }
         });
+        mDatabasesession = FirebaseDatabase.getInstance().getReference("session/"+key+"_"+timer);
         btn_BId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bidAution();
             }
         });
+        String h=tv_currentuser.getText().toString();
+        //if(tv_currentuser.getText().toString().equals(""))
+        //{
+            refreshdata();
+       // }
+       /// else {
+            loadmoredata();
+       // }
 
-        refreshdata();
-        mDatabasesession = FirebaseDatabase.getInstance().getReference("session");
+
+        return view ;
+    }
+
+    private void loadmoredata() {
         mDatabasesession.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -110,30 +122,30 @@ public class Detail_Product extends Fragment {
 
             }
         });
-        return view ;
     }
 
-    private void loaddatasession(DataSnapshot dataSnapshot) {
-        for(DataSnapshot ds :dataSnapshot.getChildren()) {
+    private void loaddatasession(DataSnapshot ds) {
+       // for(DataSnapshot ds :dataSnapshot.getChildren()) {
             SessionAution sessionAution = new SessionAution();
             sessionAution = ds.getValue(SessionAution.class);
             if(sessionAution == null) return;
-            String s= ds.getKey();
-            String tam=key+"_"+tv_currentuser.getText().toString();
-            if(s.equals(tam))
-            {
-                s=sessionAution.getUsername();
+           // String s= ds.getKey();
+          //  String tam=key+"_"+timer;
+          //  if(s.equals(tam))
+           // {
+               // s=sessionAution.getUsername();
                 tv_currentuser.setText(sessionAution.getUsername());
-                tv_currentbid.setText(sessionAution.getPrice()+" VND");
+                int len=sessionAution.getPrice().toString().length()-2;
+                tv_currentbid.setText(sessionAution.getPrice().toString().substring(0,len)+" VND");
                 Double d=sessionAution.getPrice()+10000;
-                int len =d.toString().length()-2;
+                len =d.toString().length()-2;
                 String ss=d.toString().substring(0,len);
                 tv_priceBid.setText(ss+" VND");
             }
-        }
-            // tam=ds.getValue(Product.class).getTime().toString();
+       // }
+     //       // tam=ds.getValue(Product.class).getTime().toString();
         //tv_currentbid.setText(sessionAution.getPrice().toString());
-    }
+   // }
 
     private void bidAution(){
         int len=tv_currentbid.getText().toString().length()-4;
@@ -242,7 +254,7 @@ public class Detail_Product extends Fragment {
         price=product.getPriceAution();
 
         time=product.getTimeEnd();
-        tv_currentuser.setText(time);
+      //  tv_currentuser.setText(time);
         //
        /* Calendar calendar = Calendar.getInstance();
         time=product.getTimeEnd();
@@ -306,7 +318,7 @@ public class Detail_Product extends Fragment {
 
         len=String.valueOf(product.getPrice()).length()-2;
         S=String.valueOf(product.getPrice()).substring(0,len)+" VND";
-        tv_currentbid.setText(S);
+       // tv_currentbid.setText(S);
         tv_description.setText(product.getDescription());
         //tv_currentuser.setText(user.getUid());
         Picasso.get()
