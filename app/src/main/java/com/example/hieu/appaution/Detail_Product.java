@@ -98,12 +98,15 @@ public class Detail_Product extends Fragment {
             }
         });
         String h=tv_currentuser.getText().toString();
-        //if(tv_currentuser.getText().toString().equals(""))
+        //)
         //{
             refreshdata();
        // }
        /// else {
+
             loadmoredata();
+
+
        // }
 
 
@@ -138,9 +141,10 @@ public class Detail_Product extends Fragment {
                 int len=sessionAution.getPrice().toString().length()-2;
                 tv_currentbid.setText(sessionAution.getPrice().toString().substring(0,len)+" VND");
                 Double d=sessionAution.getPrice()+10000;
-                len =d.toString().length()-2;
-                String ss=d.toString().substring(0,len);
-                tv_priceBid.setText(ss+" VND");
+                len=d.toString().length()-2;
+                String pri=d.toString().substring(0,len);
+
+                tv_priceBid.setText(pri+" VND");
             }
        // }
      //       // tam=ds.getValue(Product.class).getTime().toString();
@@ -151,19 +155,20 @@ public class Detail_Product extends Fragment {
         int len=tv_currentbid.getText().toString().length()-4;
         String s=tv_currentbid.getText().toString().substring(0,len);
 
-        tv_currentbid.setText(tv_priceBid.getText().toString());
+
         tv_currentuser.setText(user.getDisplayName());
 
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-        Toast.makeText(getActivity(), tv_currentbid.getText().toString(), Toast.LENGTH_SHORT).show();
-        len=tv_currentbid.getText().toString().length()-4;
-        String ss=tv_currentbid.getText().toString().substring(0,len);
+       // Toast.makeText(getActivity(), tv_currentbid.getText().toString(), Toast.LENGTH_SHORT).show();
+        len=tv_priceBid.getText().toString().length()-4;
+        String ss=tv_priceBid.getText().toString().substring(0,len);
        if(Double.parseDouble(s)==0){
            createDatababase(ss,tv_currentuser.getText().toString(),key,currentDateTimeString,user.getUid());
         }
         else {
            updatedata(ss,tv_currentuser.getText().toString(),key,currentDateTimeString,user.getUid());
        }
+        tv_currentbid.setText(tv_priceBid.getText().toString());
 
     }
 
@@ -176,7 +181,7 @@ public class Detail_Product extends Fragment {
         final String sss=currentDateTimeString;
         // mDatabasesession.child("session").push().setValue("ddd02");
         ;//String t=time;*/
-        String ssID=key+"_"+time;
+        String ssID=key+"_"+timer;
 
         mDatabasesession1.child("session").child(ssID).child("datetime").setValue(currentDateTimeString);
         mDatabasesession1.child("session").child(ssID).child("price").setValue(Double.parseDouble(priceid));
@@ -219,13 +224,13 @@ public class Detail_Product extends Fragment {
 
        // mDatabasesession.child("session").push().setValue("ddd02");
         ;//String t=time;
-        String ssID=key+"_"+time;
+        String ssID=key+"_"+timer;
         mDatabasesession1.child("session").child(ssID).setValue(sessionAution);
 
         customerdatabase=FirebaseDatabase.getInstance().getReference("session/"+ssID+"/Customer");
         SessionAution sessionAution1 = new SessionAution();
         sessionAution1.setUsername(user);
-        sessionAution1.setPrice(price);
+        sessionAution1.setPrice(Double.parseDouble(priceid));
         sessionAution1.setDatetime(currentDateTimeString);
         customerdatabase.child(uid).setValue(sessionAution1);
     }
@@ -251,9 +256,9 @@ public class Detail_Product extends Fragment {
         product.setKey(ds.getKey());
         tv_nameproduct.setText(product.getName());
         int len=String.valueOf(product.getPriceAution()).length()-2;
-        price=product.getPriceAution();
+        //price=product.getPriceAution();
 
-        time=product.getTimeEnd();
+       // time=product.getTimeEnd();
       //  tv_currentuser.setText(time);
         //
        /* Calendar calendar = Calendar.getInstance();
@@ -318,7 +323,7 @@ public class Detail_Product extends Fragment {
 
         len=String.valueOf(product.getPrice()).length()-2;
         S=String.valueOf(product.getPrice()).substring(0,len)+" VND";
-       // tv_currentbid.setText(S);
+        tv_currentbid.setText(S);
         tv_description.setText(product.getDescription());
         //tv_currentuser.setText(user.getUid());
         Picasso.get()

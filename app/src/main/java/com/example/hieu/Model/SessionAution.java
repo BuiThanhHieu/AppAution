@@ -67,6 +67,7 @@ public class SessionAution {
     public void setPrice(Double price) {
         this.price = price;
     }
+
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("idSanPham", keysp);
