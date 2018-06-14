@@ -78,44 +78,8 @@ public class Aution extends Fragment {
         dataproduct= FirebaseDatabase.getInstance().getReference("store");
         dataproduct1= FirebaseDatabase.getInstance().getReference("store/"+key);
 
-      /*  DrawerLayout drawer = (DrawerLayout) view.findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                getActivity(), drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        NavigationView navigationView = (NavigationView) view.findViewById(R.id.nav_view);
-         navigationView.setNavigationItemSelectedListener(this);*/
-        // Inflate the layout for this fragment
+
         refreshdata();
-
-      /*  Thread t=new Thread(){
-            @Override
-            public void run() {
-                while (!isInterrupted()) {
-
-                    try {
-                        Thread.sleep(1000);
-                        if(getActivity() == null)
-                            return;
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                               // Toast.makeText(getActivity(), "fff", Toast.LENGTH_SHORT).show();
-                                 refreshdata();
-
-
-
-                            }
-                        });
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-        t.start();*/
-
 
         return view;
 
@@ -212,15 +176,45 @@ public class Aution extends Fragment {
             // Toast.makeText(this,event.getDatestart(), Toast.LENGTH_SHORT).show();
             Calendar calendar = Calendar.getInstance();
             String []s=product.getTimeEnd().split(" ");
-            String []hourend=s[1].split(":");;
-            int timeend=Integer.parseInt(hourend[1])*60+Integer.parseInt(hourend[2]);
-            int time=calendar.get(Calendar.MINUTE)*60+calendar.get(Calendar.SECOND);
-            int minute1=(timeend-time)/60;
-            int second1= (timeend-time)%60;
-            int t=minute1+second1;
-         //  if(t>=0) {
+            String []hourend=s[1].split(":");
+            int hour=Integer.parseInt(hourend[0])-calendar.get(Calendar.HOUR_OF_DAY);
+            //int timeend=Integer.parseInt(hourend[1])*60+Integer.parseInt(hourend[2]);
+           // int time=calendar.get(Calendar.MINUTE)*60+calendar.get(Calendar.SECOND);
+            int minute1=Integer.parseInt(hourend[1])-calendar.get(Calendar.MINUTE);
+            int second1= Integer.parseInt(hourend[2])-calendar.get(Calendar.SECOND);
 
+            int timeend=Integer.parseInt(hourend[0])*3600+Integer.parseInt(hourend[1])*60+Integer.parseInt(hourend[2]);
+            int timecurrent=calendar.get(Calendar.HOUR_OF_DAY)*3600+calendar.get(Calendar.MINUTE)*60+calendar.get(Calendar.SECOND);
+            // (hour-calendar.get(Calendar.HOUR_OF_DAY)>=0)
+         //  if(t>=0) {
+            if(product.getQuantity()>0 && (timeend-timecurrent)>=0) {
                 products.add(product);
+            }
+           else {
+                if(product.getQuantity()>0) {
+                    Product product1 = new Product();
+                    int d = calendar.get(Calendar.DATE);
+                    int m = calendar.get(Calendar.MONTH);
+                    int y = calendar.get(Calendar.YEAR);
+                    int h = calendar.get(Calendar.HOUR_OF_DAY);
+                    int mi = calendar.get(Calendar.MINUTE);
+                    int se = calendar.get(Calendar.SECOND);
+                    String timestart = d + "_" + m + "_" + y + " " + h + ":" + mi + ":" + se;
+                    //product1.setTimeStart(d+"_"+m+"_"+y+" "+h+":"+mi+":"+se);
+                    if (mi + 5 > 59) {
+                        h++;
+                        mi = mi + 5 - 59;
+                    }
+                    mi=mi+5;
+                    String timeend1 = d + "_" + m + "_" + y + " " + h + ":" + mi + ":" + se;
+                    dataproduct.child(ds.getKey()).child("TimeStart").setValue(timestart);
+                    dataproduct.child(ds.getKey()).child("TimeEnd").setValue(timeend1);
+                    products.clear();
+                    refreshdata();
+                }
+              //  product1.setTimeEnd(d+"_"+m+"_"+y+" "+h+":"+mi+":"+se);
+            }
+
           /*  }
             else {
                 if(ds.getValue(Product.class).getQuantity()>0)

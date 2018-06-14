@@ -108,12 +108,15 @@ public class Account extends Fragment implements AdapterView.OnItemSelectedListe
 
     private void luudata() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        AccountUsers accountUsers= new AccountUsers();
-        accountUsers.setName(edt_name.getText().toString());
-        accountUsers.setAddress(edt_px.getText().toString()+","+edt_qh.getText().toString()+","+edt_ttp.getText().toString());
-        accountUsers.setPhone(edt_sdt.getText().toString());
-        accountUsers.setEmai(edt_email.getText().toString());
-        mDatabase1.child("Users").child(user.getUid()).setValue(accountUsers);
+      //  AccountUsers accountUsers= new AccountUsers();
+        String name=edt_name.getText().toString();
+        String addres=(edt_px.getText().toString()+","+edt_qh.getText().toString()+","+edt_ttp.getText().toString());
+        String std=(edt_sdt.getText().toString());
+        String email=edt_email.getText().toString();
+        mDatabase1.child("Users").child(user.getUid()).child("name").setValue(name);
+        mDatabase1.child("Users").child(user.getUid()).child("address").setValue(addres);
+        mDatabase1.child("Users").child(user.getUid()).child("phone").setValue(std);
+        mDatabase1.child("Users").child(user.getUid()).child("email").setValue(email);
     }
 
 

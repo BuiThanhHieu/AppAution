@@ -15,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hieu.Model.Product;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
@@ -62,7 +64,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ImageVie
         holder.time.setText(minute1+":"+second1);*/
         //
         Calendar calendar = Calendar.getInstance();
-        int hour=calendar.get(Calendar.HOUR);
+        int hour=calendar.get(Calendar.HOUR_OF_DAY);
         int minute=calendar.get(Calendar.MINUTE);
         int second=calendar.get(Calendar.SECOND);
        /* String []curentdatetime=productcurent.getTimeStart().split(" ");
@@ -82,18 +84,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ImageVie
 
         String []gettime=productcurent.getTimeEnd().split(" ");
         String []timeEnd=gettime[1].split(":");
+        int gio= Integer.parseInt(timeEnd[0])-hour;
         int phut=Integer.parseInt(timeEnd[1])-minute;
         int giay=Integer.parseInt(timeEnd[2])-second;
-        int gio= Integer.parseInt(timeEnd[0])-hour;
+        int j=Integer.parseInt(timeEnd[0])*3600+Integer.parseInt(timeEnd[1])*60+Integer.parseInt(timeEnd[2]);
+        int h=calendar.get(Calendar.HOUR_OF_DAY)*3600+calendar.get(Calendar.MINUTE)*60+calendar.get(Calendar.SECOND);
+        if(j-h>0)
+        {
+            if(phut<0)
+            {
+                phut=phut+60;
+            }
 
-        if(phut<0)
-        {
-            phut=phut+60;
-        }
-        if(giay<0)
-        {
-            giay=giay+60;
-        }
 
 
             countDownTimer= new CountDownTimer((phut*60+giay)*1000,1000) {
@@ -103,7 +105,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ImageVie
                     long p=t/60;
                     long g=t%60;
                     String m,s;
-                    m=""+p;
+                    m=p+"";
                     s=""+g;
                     if(p/10<1)
                     {
@@ -113,15 +115,25 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ImageVie
                         s="0"+g;
                     }
                     holder.time.setText(m+":"+s);
-                      //  holder.time.setText(""+millisUntilFinished/1000);
+                    //  holder.time.setText(""+millisUntilFinished/1000);
                 }
 
                 @Override
                 public void onFinish() {
+                    if(productcurent.getQuantity()>0) {
 
+                        updatetime(productcurent.getKey());
+                        //products.add(product);
+                    }
+                    //  product1.setTimeEnd(d+"_"+m+"_"+y+" "+h+":"+mi+":"+se);
                 }
+
             };
             countDownTimer.start();
+        }
+        else {
+            updatetime(productcurent.getKey());
+        }
         //
         Picasso.get()
                 .load(productcurent.getImageURL())
@@ -142,6 +154,28 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ImageVie
 
             }
         });
+    }
+    public void updatetime(String key){
+        Calendar calendar1=Calendar.getInstance();
+        int d = calendar1.get(Calendar.DATE);
+        int m = calendar1.get(Calendar.MONTH);
+        int y = calendar1.get(Calendar.YEAR);
+        int h = calendar1.get(Calendar.HOUR_OF_DAY);
+        int mi = calendar1.get(Calendar.MINUTE);
+        int se = calendar1.get(Calendar.SECOND);
+        String timestart = d + "_" + m + "_" + y + " " + h + ":" + mi + ":" + se;
+        //product1.setTimeStart(d+"_"+m+"_"+y+" "+h+":"+mi+":"+se);
+        if (mi + 5 > 59) {
+            h++;
+            mi = mi + 5 - 59;
+        }
+        else {
+            mi = mi + 5;
+        }
+        String timeend1 = d + "_" + m + "_" + y + " " + h + ":" + mi + ":" + se;
+        DatabaseReference dataproduct =FirebaseDatabase.getInstance().getReference("store");
+        dataproduct.child(key).child("TimeStart").setValue(timestart);
+        dataproduct.child(key).child("TimeEnd").setValue(timeend1);
     }
 
     @Override

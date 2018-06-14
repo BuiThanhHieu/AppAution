@@ -18,22 +18,24 @@ public class Bid extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mTabHost = new FragmentTabHost(getActivity());
-        mTabHost.setup(getActivity(), getChildFragmentManager(), R.layout.fragment_bid);
+        View view=inflater.inflate(R.layout.fragment_bid, container, false);
+       // mTabHost = new FragmentTabHost(getActivity());
+        mTabHost = view.findViewById (android.R.id.tabhost);
+        mTabHost.setup(getActivity(), getChildFragmentManager(),R.id.realtabcontent);
 
         Bundle arg1 = new Bundle();
         arg1.putInt("Arg for Frag1", 1);
-        mTabHost.addTab(mTabHost.newTabSpec("Tab1").setIndicator("Frag Tab1"),
+        mTabHost.addTab(mTabHost.newTabSpec("Tab1").setIndicator("Active"),
                 Bid_Active.class, arg1);
 
         Bundle arg2 = new Bundle();
         arg2.putInt("Arg for Frag2", 2);
-        mTabHost.addTab(mTabHost.newTabSpec("Tab2").setIndicator("Frag Tab2"),
+        mTabHost.addTab(mTabHost.newTabSpec("Tab2").setIndicator("Win"),
                 Bid_Win.class, arg2);
         Bundle arg3 = new Bundle();
         arg2.putInt("Arg for Frag2", 2);
-        mTabHost.addTab(mTabHost.newTabSpec("Tab2").setIndicator("Frag Tab3"),
+        mTabHost.addTab(mTabHost.newTabSpec("Tab2").setIndicator("Lose"),
                 Bid_Lost.class, arg3);
-        return mTabHost;
+        return view;
     }
 }

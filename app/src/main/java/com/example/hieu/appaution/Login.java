@@ -334,14 +334,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     private void updateUI(FirebaseUser user) {
         if(user!=null)
         {
-          AccountUsers accountUsers = new AccountUsers();
+        /*  AccountUsers accountUsers = new AccountUsers();
           accountUsers.setName(user.getDisplayName());
           accountUsers.setEmai(user.getEmail());
           accountUsers.setPhone(user.getPhoneNumber());
          //accountUsers.setKey(user.getUid());
-          mDatabase.child("Users").child(user.getUid()).setValue(accountUsers);
+          mDatabase.child("Users").child(user.getUid()).setValue(accountUsers);*/
              //accountUsers.setAddress(user.get);
-
+            mDatabase.child("Users").child(user.getUid()).child("name").setValue(user.getDisplayName());
+            mDatabase.child("Users").child(user.getUid()).child("phone").setValue(user.getPhoneNumber());
+            mDatabase.child("Users").child(user.getUid()).child("email").setValue(user.getEmail());
         }
         else{
             Toast.makeText(this, "fail" +"", Toast.LENGTH_SHORT).show();

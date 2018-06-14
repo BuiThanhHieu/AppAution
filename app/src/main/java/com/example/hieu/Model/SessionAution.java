@@ -68,14 +68,14 @@ public class SessionAution {
         this.price = price;
     }
 
-    public Map<String, Object> toMap() {
+    /*public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("idSanPham", keysp);
         result.put("pricewin", price);
         result.put("userwin", username);
         result.put("nameSP",namesp);
         return result;
-    }
+    }*/
     public SessionAution(){
 
     }

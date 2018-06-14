@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hieu.Model.History;
 import com.example.hieu.Model.Product;
 import com.example.hieu.Model.SessionAution;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,7 +30,7 @@ import java.util.Date;
 
 public class Detail_Product extends Fragment {
     String key,time;
-    DatabaseReference mDatabase,mDatabasesession,mDatabasesession1,Databasesession,customerdatabase;
+    DatabaseReference mDatabase,mDatabasesession,mDatabasesession1,Databasesession,customerdatabase,userhistory;
     TextView tv_time,tv_currentbid,tv_currentuser,tv_priceBid,tv_description,tv_nameproduct;
     Button btn_BId;
     ImageView imageView,img_decrese,img_increase;
@@ -38,6 +39,7 @@ public class Detail_Product extends Fragment {
     String timer;
     CountDownTimer countDownTimer;
     String keytime;
+    Double quantity;
     public Detail_Product() {
         // Required empty public constructor
     }
@@ -81,7 +83,7 @@ public class Detail_Product extends Fragment {
                 String s = tv_priceBid.getText().toString();
                 int lens = s.length() - 4;
                 s = s.substring(0, lens);
-                if (Double.parseDouble(s) > price) {
+                if (Double.parseDouble(s) > price || !tv_currentbid.getText().equals("0 VND")) {
                     Double t = Double.parseDouble(s) - 10000;
 
                     int len = t.toString().length() - 2;
@@ -91,13 +93,14 @@ public class Detail_Product extends Fragment {
             }
         });
         mDatabasesession = FirebaseDatabase.getInstance().getReference("session/"+key+"_"+timer);
+        userhistory= FirebaseDatabase.getInstance().getReference("Users");
         btn_BId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bidAution();
             }
         });
-        String h=tv_currentuser.getText().toString();
+
         //)
         //{
             refreshdata();
@@ -105,8 +108,11 @@ public class Detail_Product extends Fragment {
        /// else {
 
             loadmoredata();
-
-
+             String h=tv_currentbid.getText().toString();
+            int tamf=h.length()-4;
+            h=h.substring(0,tamf);
+            tamf =tamf+10000;
+            tv_priceBid.setText(tamf+" VND");
        // }
 
 
@@ -139,11 +145,12 @@ public class Detail_Product extends Fragment {
                // s=sessionAution.getUsername();
                 tv_currentuser.setText(sessionAution.getUsername());
                 int len=sessionAution.getPrice().toString().length()-2;
-                tv_currentbid.setText(sessionAution.getPrice().toString().substring(0,len)+" VND");
-                Double d=sessionAution.getPrice()+10000;
+                String s =sessionAution.getPrice().toString().substring(0,len);
+                tv_currentbid.setText(s);
+                Double d=Double.parseDouble(tv_currentbid.getText().toString())+10000;
                 len=d.toString().length()-2;
                 String pri=d.toString().substring(0,len);
-
+                                                                                                                              tv_currentbid.setText(s+" VND");
                 tv_priceBid.setText(pri+" VND");
             }
        // }
@@ -152,35 +159,71 @@ public class Detail_Product extends Fragment {
    // }
 
     private void bidAution(){
-        int len=tv_currentbid.getText().toString().length()-4;
-        String s=tv_currentbid.getText().toString().substring(0,len);
 
+       String s=tv_currentbid.getText().toString();
+        int len =s.length()-4;
+        s=s.substring(0,len);
 
         tv_currentuser.setText(user.getDisplayName());
 
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
        // Toast.makeText(getActivity(), tv_currentbid.getText().toString(), Toast.LENGTH_SHORT).show();
-        len=tv_priceBid.getText().toString().length()-4;
+       len=tv_priceBid.getText().toString().length()-4;
         String ss=tv_priceBid.getText().toString().substring(0,len);
        if(Double.parseDouble(s)==0){
-           createDatababase(ss,tv_currentuser.getText().toString(),key,currentDateTimeString,user.getUid());
+           createDatababase(ss,user.getDisplayName(),key,currentDateTimeString,user.getUid());
         }
         else {
-           updatedata(ss,tv_currentuser.getText().toString(),key,currentDateTimeString,user.getUid());
+           updatedata(ss,user.getDisplayName().toString(),key,currentDateTimeString,user.getUid());
        }
-        tv_currentbid.setText(tv_priceBid.getText().toString());
+       tv_currentbid.setText(tv_priceBid.getText().toString());
+        loadmoredata();
+        //  update hostory user
+     //  datauser = FirebaseDatabase.getInstance().getReference("Users");
+      // updatehistory(key);
 
     }
 
+    private void updatehistory(DataSnapshot dataSnapshot) {
+        for (DataSnapshot ds:dataSnapshot.getChildren()){
+            String key = ds.getKey();
+            updatehistoryuser(key);
+        }
+        /*
+        userhistory= FirebaseDatabase.getInstance().getReference("Users");
+        String ssID=key+"_"+timer;
+        History history =new History();
+
+            history.setIdsp(key);
+            history.setState("True");
+
+            userhistory.child(user.getUid()).child("history").child(ssID).;
+
+        }*/
+    }
+
+    private void updatehistoryuser(String key1) {
+        History history = new History();
+        String pri= tv_currentbid.getText().toString();
+        int len = pri.length()-4;
+        pri = pri.substring(0,len);
+        history.setPricewin(Double.parseDouble(pri));
+        history.setIdsp(key);
+
+        history.setTimeend(timer);
+        if(user.getUid().equals(key1))
+        {
+            history.setState("Won");
+        }
+        else {
+            history.setState("Lose");
+        }
+        String ssID=key+"_"+timer;
+        userhistory.child(key1).child("history").child(ssID).setValue(history);
+    }
+
     private void updatedata(String priceid, String user, String key, String currentDateTimeString,String uid) {
-       /* SessionAution sessionAution = new SessionAution();
-        sessionAution.setUsername(user);
-        sessionAution.setPrice(Double.parseDouble(priceid));
-        sessionAution.setDatetime(currentDateTimeString);
-        sessionAution.setKeysp(key);
-        final String sss=currentDateTimeString;
-        // mDatabasesession.child("session").push().setValue("ddd02");
-        ;//String t=time;*/
+
         String ssID=key+"_"+timer;
 
         mDatabasesession1.child("session").child(ssID).child("datetime").setValue(currentDateTimeString);
@@ -196,23 +239,6 @@ public class Detail_Product extends Fragment {
         sessionAution1.setPrice(pr);
         sessionAution1.setDatetime(currentDateTimeString);
         customerdatabase.child(uid).setValue(sessionAution1);
-      /*  mDatabasesession.child("session").child(ssID).child("Customer").child(uid).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                SessionAution sessionAution1 = new SessionAution();
-                sessionAution1.setUsername(tv_currentuser.getText() .toString());
-                sessionAution1.setPrice(price);
-                sessionAution1.setDatetime(sss);
-
-                //sessionAution.setKeysp(key);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
     }
 
     private void createDatababase(String priceid, String user, String key, String currentDateTimeString,String uid) {
@@ -233,6 +259,23 @@ public class Detail_Product extends Fragment {
         sessionAution1.setPrice(Double.parseDouble(priceid));
         sessionAution1.setDatetime(currentDateTimeString);
         customerdatabase.child(uid).setValue(sessionAution1);
+        if(quantity>0){
+            quantity=quantity-1;
+            mDatabase.child("Quantity").setValue(quantity);
+        }
+        customerdatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                updatehistory(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        //loadmoredata();
+
     }
 
 
@@ -250,12 +293,12 @@ public class Detail_Product extends Fragment {
     }
 
     public void getdata(DataSnapshot ds){
-        Product product = new Product();
+        Product product ;
         product = ds.getValue(Product.class);
         if(product == null) return;
         product.setKey(ds.getKey());
         tv_nameproduct.setText(product.getName());
-        int len=String.valueOf(product.getPriceAution()).length()-2;
+        //int len=String.valueOf(product.getPriceAution()).length()-2;
         //price=product.getPriceAution();
 
        // time=product.getTimeEnd();
@@ -271,7 +314,7 @@ public class Detail_Product extends Fragment {
         int second= (timeend-time)%60;
         tv_time.setText(minute+":"+second);*/
         Calendar calendar = Calendar.getInstance();
-        int hour=calendar.get(Calendar.HOUR);
+        int hour=calendar.get(Calendar.HOUR_OF_DAY);
         int minute=calendar.get(Calendar.MINUTE);
         int second=calendar.get(Calendar.SECOND);
         String []gettime=product.getTimeEnd().split(" ");
@@ -279,51 +322,82 @@ public class Detail_Product extends Fragment {
         int phut=Integer.parseInt(timeEnd[1])-minute;
         int giay=Integer.parseInt(timeEnd[2])-second;
         int gio= Integer.parseInt(timeEnd[0])-hour;
-
-        if(phut<0)
+        if (gio<0){
+            tv_time.setText("");
+        }else
         {
-            phut=phut+60;
-        }
-        if(giay<0)
-        {
-            giay=giay+60;
-        }
-
-
-        countDownTimer= new CountDownTimer((phut*60+giay)*1000,1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                long t=millisUntilFinished/1000;
-                long p=t/60;
-                long g=t%60;
-                String m,s;
-                m=""+p;
-                s=""+g;
-                if(p/10<1)
-                {
-                    m="0"+p;
-                }
-                if(g/10<1){
-                    s="0"+g;
-                }
-                tv_time.setText(m+":"+s);
-                //  holder.time.setText(""+millisUntilFinished/1000);
+            if(phut<0)
+            {
+                phut=phut+60;
             }
 
-            @Override
-            public void onFinish() {
 
-            }
-        };
-        countDownTimer.start();
+            countDownTimer= new CountDownTimer((phut*60+giay)*1000,1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    long t=millisUntilFinished/1000;
+                    long p=t/60;
+                    long g=t%60;
+                    String m,s;
+                    m=""+p;
+                    s=""+g;
+                    if(p/10<1)
+                    {
+                        m="0"+p;
+                    }
+                    if(g/10<1){
+                        s="0"+g;
+                    }
+                    tv_time.setText(m+":"+s);
+                    //  holder.time.setText(""+millisUntilFinished/1000);
+                }
+
+                @Override
+                public void onFinish() {
+                   /* userhistory= FirebaseDatabase.getInstance().getReference("Users");
+                    History history = new History();
+                    String ssID=key+"_"+timer;
+                    // userhistory.child(user.getUid()).child("history").push().setValue(ssID);
+                    if(tv_currentuser.getText().toString().equals(""))
+                    {
+
+                    }
+                    else{ history.setIdsp(key);
+                        history.setTimeend(timer);
+                        int len =tv_currentbid.getText().toString().length()-4;
+                        history.setPricewin(Double.parseDouble(tv_currentbid.getText().toString().substring(0,len)));
+
+                        if(user.getDisplayName().equals(tv_currentuser.getText().toString())){
+                            history.setState("Won");
+                        }
+                        else{
+                            history.setState("Lose");
+                        }
+                        userhistory.child(user.getUid()).child("history").child(ssID).setValue(history);
+                    }
+*/
+                }
+            };
+            countDownTimer.start();
+        }
+
+
+
         //
-        String S=String.valueOf(product.getPriceAution()).substring(0,len)+" VND";
+        quantity=product.getQuantity();
+        //
+
+        String S=String.valueOf(product.getPriceAution());
+        int len= S.length()-2;
+        S=S.substring(0,len)+" VND";
 
         tv_priceBid.setText(S);
 
-        len=String.valueOf(product.getPrice()).length()-2;
-        S=String.valueOf(product.getPrice()).substring(0,len)+" VND";
-        tv_currentbid.setText(S);
+        //len=String.valueOf(product.getPrice()).length()-2;
+        S=String.valueOf(product.getPrice());
+        len=S.length()-2;
+        S=S.substring(0,len)+" VND";
+     //   tv_currentbid.setText(S);
         tv_description.setText(product.getDescription());
         //tv_currentuser.setText(user.getUid());
         Picasso.get()
