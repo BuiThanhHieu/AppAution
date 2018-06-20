@@ -51,8 +51,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ImageVie
 
         int len=String.valueOf(productcurent.getPriceAution()).length()-2;
         String S=String.valueOf(productcurent.getPriceAution()).substring(0,len);
-        final String name=productcurent.getTimeEnd();
-        holder.gia.setText(S);
+        final String times=productcurent.getTimeEnd();
+        len=String.valueOf(productcurent.getPrice()).length()-2;
+        String S1=String.valueOf(productcurent.getPrice()).substring(0,len);
+        if(productcurent.getPrice()>productcurent.getPriceAution())
+        {
+            holder.gia.setText(S1);
+        }
+         else {
+            holder.gia.setText(S);
+        }
         //
        /* String []s=productcurent.getTimeEnd().split(" ");
         String []hourend=s[1].split(":");;
@@ -146,7 +154,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ImageVie
                 Toast.makeText(context,t, Toast.LENGTH_SHORT).show();
                 Detail_Product detail_product= new Detail_Product();
                 Bundle bundle =new Bundle();
-                bundle.putString("time",name);
+                bundle.putString("time",times);
                 bundle.putString("key",holder.key.getText().toString());
                 detail_product.setArguments(bundle);
                 FragmentManager manager = ((AppCompatActivity)context).getSupportFragmentManager();

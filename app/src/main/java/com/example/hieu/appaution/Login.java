@@ -342,7 +342,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
           mDatabase.child("Users").child(user.getUid()).setValue(accountUsers);*/
              //accountUsers.setAddress(user.get);
             mDatabase.child("Users").child(user.getUid()).child("name").setValue(user.getDisplayName());
-            mDatabase.child("Users").child(user.getUid()).child("phone").setValue(user.getPhoneNumber());
+         ///   mDatabase.child("Users").child(user.getUid()).child("phone").setValue(user.getPhoneNumber());
             mDatabase.child("Users").child(user.getUid()).child("email").setValue(user.getEmail());
         }
         else{

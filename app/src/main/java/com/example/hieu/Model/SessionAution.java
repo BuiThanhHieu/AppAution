@@ -11,6 +11,15 @@ public class SessionAution {
     private String username;
     private String datetime;
     private Double price;
+    private String keyname;
+
+    public String getKeyname() {
+        return keyname;
+    }
+
+    public void setKeyname(String keyname) {
+        this.keyname = keyname;
+    }
 
     public String getKey() {
         return key;

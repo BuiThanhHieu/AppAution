@@ -7,12 +7,15 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 public class Profile extends Fragment {
     TextView tvtaikhoan,tvdangxuat ;
@@ -21,9 +24,10 @@ public class Profile extends Fragment {
     String name ="hoalucbinh";
     String email;
     TextView tv_userid;
+    ImageView imageView ;
     public static Fragment newInstance(){
         Fragment wFrag = new Profile();
-        return wFrag;
+         return wFrag;
 
 
     }
@@ -36,6 +40,7 @@ public class Profile extends Fragment {
 
          tvtaikhoan =  view.findViewById(R.id.tvTaiKhoan);
          tv_userid=view.findViewById(R.id.tv_userid);
+         imageView=view.findViewById(R.id.imageView);
         GoogleSignInAccount account=  GoogleSignIn.getLastSignedInAccount(getActivity()); GoogleSignIn.getLastSignedInAccount(getActivity());
 
        //  tv_userid.setText(account.getId());
@@ -58,6 +63,13 @@ public class Profile extends Fragment {
            email = bb.getString("email");
        }
         // Inflate the layout for this fragment
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Picasso.get()
+                .load(user.getPhotoUrl())
+                .fit()
+                .centerCrop()
+                .into(imageView);
+        tv_userid.setText(user.getDisplayName());
         return view;
     }
 

@@ -33,8 +33,8 @@ public class Bid extends Fragment {
         mTabHost.addTab(mTabHost.newTabSpec("Tab2").setIndicator("Win"),
                 Bid_Win.class, arg2);
         Bundle arg3 = new Bundle();
-        arg2.putInt("Arg for Frag2", 2);
-        mTabHost.addTab(mTabHost.newTabSpec("Tab2").setIndicator("Lose"),
+        arg2.putInt("Arg for Frag3", 3);
+        mTabHost.addTab(mTabHost.newTabSpec("Tab3").setIndicator("Lose"),
                 Bid_Lost.class, arg3);
         return view;
     }

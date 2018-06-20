@@ -28,7 +28,7 @@
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:id="@+id/btn_drawer"
-                    android:background="@drawable/drawer1"
+                    android:background="@drawable/icon"
                     />
                 <TextView
                     android:layout_width="match_parent"
